@@ -6,10 +6,10 @@ pipeline {
       yamlFile 'build-pod.yaml'  // path to the pod definition relative to the root of our project 
     }
   }
-    stage('Build Docker Image') {
-      steps {
-        container('docker') {
-          stage('Build docker'){
+    stages('Build Docker Image') {
+      stage('Build docker'){
+        steps {
+          container('docker') {
             withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]){
               sh 'docker login docker.io -u vniks -p ${dockerhubpwd}'
               sh "docker build -t vniks/promo-app:dev ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
