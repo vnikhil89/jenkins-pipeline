@@ -9,12 +9,14 @@ pipeline {
     stage('Build Docker Image') {
       steps {
         container('docker') {
-          withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]){
-            sh 'docker login docker.io -u vniks -p ${dockerhubpwd}'
-            sh "docker build -t vniks/promo-app:dev ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
-            sh "docker push vniks/promo-app:dev"        // which is just connecting to the host docker deaemon
-        }
+          stage('Build docker'){
+            withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]){
+              sh 'docker login docker.io -u vniks -p ${dockerhubpwd}'
+              sh "docker build -t vniks/promo-app:dev ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
+              sh "docker push vniks/promo-app:dev"        // which is just connecting to the host docker deaemon
+           }
         }   
       }
     }
   }
+}
