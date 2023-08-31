@@ -20,6 +20,7 @@ spec:
       containers:
       - image: docker.io/vniks/python-hello-app:v1
         name: python-hello-app
+        serviceAccountName: jenkins
         ports:
         - name: hello
           containerPort: 5000
