@@ -18,19 +18,12 @@ podTemplate(containers: [
                   }
                 }
             }
-        }
-
-    }
-    node(POD_LABEL) {
         stage('Deployment') {
-            git 'https://github.com/vnikhil89/jenkins-pipeline.git'
             container('kubectl') {
-                stage('Build containers') {
                   sh 'kubectl replace --force -f hello.yaml'
                   sh 'kubectl replace --force -f hello-svc.yaml'
                 }
             }
         }
-
-    }    
+    }
 }
