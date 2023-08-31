@@ -19,7 +19,7 @@ spec:
     spec:
       serviceAccountName: jenkins
       containers:
-      - image: docker.io/vniks/python-hello-app:v1
+      - image: docker.io/vniks/jenkins-pipeline:v1
         name: python-hello-app
         ports:
         - name: hello
