@@ -1,49 +1,25 @@
-
 pipeline {
-
-  environment {
-    dockerimagename = "vniks/python-hello-app"
-    dockerImage = ""
+  agent {
+    kubernetes {
+      label 'promo-app'  // all your pods will be named with this prefix, followed by a unique id
+      idleMinutes 5  // how long the pod will live after no jobs have run on it
+      yamlFile 'build-pod.yaml'  // path to the pod definition relative to the root of our project 
+      defaultContainer 'maven'  // define a default container if more than a few stages use it, will default to jnlp container
+    }
   }
-  agent any
   stages {
-
-    stage('Checkout Source') {
-      steps {
-        git 'https://github.com/vnikhil89/python-flask.git'
+    stage('Build') {
+      steps {  // no container directive is needed as the maven container is the default
+        sh "mvn clean install"   
       }
     }
     stage('Build Docker Image') {
       steps {
-        script {
-          sh 'podman build -t docker.io/vniks/python-hello-app:v2 .'
-                }
-            }
-        }
-    stage('Pushing Image') {
-      steps{
-        script {
-          withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]){
-          sh 'podman login docker.io -u vniks -p ${dockerhubpwd}'
-          }
-          sh 'podman push docker.io/vniks/python-hello-app:v2'
+        container('docker') {  
+          sh "docker build -t vividseats/promo-app:dev ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container, 
+          sh "docker push vividseats/promo-app:dev"        // which is just connecting to the host docker deaemon
         }
       }
-    }
-
-    stage('Deploying App to Kubernetes') {
-      steps {
-        sshagent(['k8s']) {
-           sh "scp -o StrictHostKeyChecking=no hello.yaml hello-svc.yaml root@10.0.200.133:/root"
-        script {
-           sh "ssh root@10.0.200.133 kubectl create -f hello.yaml"
-           sh "ssh root@10.0.200.133 kubectl create -f hello-svc.yaml"
-           }
-        }
-
-      }
-
     }
   }
 }
-    
