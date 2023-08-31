@@ -10,7 +10,7 @@ podTemplate(containers: [
         stage('Get a git project') {
             git 'https://github.com/vnikhil89/jenkins-pipeline.git'
             container('podman') {
-                stage('Build a docker project') {
+                stage('Build a docker image and push') {
                   withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]){
                     sh 'podman login docker.io -u vniks -p ${dockerhubpwd}'
                     sh 'podman build -t docker.io/vniks/jenkins-pipeline:v1 .'
