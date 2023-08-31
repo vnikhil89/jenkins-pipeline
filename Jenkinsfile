@@ -26,8 +26,8 @@ podTemplate(containers: [
             git 'https://github.com/vnikhil89/jenkins-pipeline.git'
             container('kubectl') {
                 stage('Build containers') {
-                  sh 'kubectl create -f hello.yaml'
-                  sh 'kubectl create -f hello-svc.yaml'
+                  sh 'kubectl replace --force -f hello.yaml'
+                  sh 'kubectl replace --force -f hello-svc.yaml'
                 }
             }
         }
