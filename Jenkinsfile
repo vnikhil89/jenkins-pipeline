@@ -20,7 +20,7 @@ podTemplate(containers: [
             }
         stage('Deployment') {
             container('kubectl') {
-                  sh 'kubectl replace --force -f hello.yaml'
+                  sh 'kubectl apply -f hello.yaml'
                   sh 'kubectl replace --force -f hello-svc.yaml'
                 }
             }
